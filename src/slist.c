@@ -1,7 +1,7 @@
 #include <stdlib.h>
-#include "list.h"
+#include "slist.h"
 
-void bdsm_slist_new(bdsm_slist* list, size_t alignment) {
+void bdsm_slist_init(bdsm_slist* list, size_t alignment) {
     list->alignment = alignment;
     list->size = 0;
     list->root.next = NULL;
@@ -41,9 +41,14 @@ void* bdsm_slist_insert(bdsm_slist* list, bdsm_slist_node* after,
 }
 
 void bdsm_slist_erase(bdsm_slist* list, bdsm_slist_node* after) {
-    (void)list;
+    list->size--;
 
     bdsm_slist_node* next = after->next;
+    if(after == &list->root)
+        list->end = NULL;
+    else if(next == list->end)
+        list->end = after;
+
     after->next = next->next;
 
     free(next);

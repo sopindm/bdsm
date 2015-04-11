@@ -14,7 +14,7 @@ typedef struct bdsm_slist {
     bdsm_slist_node* end;
 } bdsm_slist;
 
-void bdsm_slist_new(bdsm_slist*, size_t alignment);
+void bdsm_slist_init(bdsm_slist*, size_t alignment);
 
 bdsm_slist_node* bdsm_slist_begin(bdsm_slist*);
 bdsm_slist_node* bdsm_slist_end(bdsm_slist*);

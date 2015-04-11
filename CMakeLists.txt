@@ -16,7 +16,7 @@ enable_testing()
 set(CMAKE_C_FLAGS "-Werror -Wall -Wextra")
 
 add_library(${CMAKE_PROJECT_NAME} STATIC src/alloc.c
-  src/list.c
+  src/slist.c
 )
 
 #
