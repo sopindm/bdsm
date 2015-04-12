@@ -3,3 +3,7 @@ script: cmake . && make && make test
 compiler: 
   - gcc
   - clang
+notifications:
+  email:
+    recipients:
+      - sopindm@gmail.com
