@@ -1,15 +1,20 @@
 #include <stdlib.h>
+#include "alloc.h"
 #include "slist.h"
 
-void bdsm_slist_init(bdsm_slist* list, size_t alignment) {
-    list->alignment = alignment;
+void bdsm_slist_init(bdsm_slist* list) {
     list->size = 0;
     list->root.next = NULL;
     list->end = NULL;
 }
 
-static size_t _align(size_t what, size_t alignment) {
-    return (what + alignment - 1) / alignment * alignment;
+void bdsm_slist_free(bdsm_slist* list) {
+    bdsm_slist_node* it = bdsm_slist_begin(list);
+    while(it != NULL) {
+        bdsm_slist_node* next = it->next;
+        bdsm_free(it);
+        it = next;
+    }
 }
 
 bdsm_slist_node* bdsm_slist_begin(bdsm_slist* list) {
@@ -19,14 +24,13 @@ bdsm_slist_node* bdsm_slist_end(bdsm_slist* list) {
     return list->end;
 }
 
-void* bdsm_slist_get(bdsm_slist* list, bdsm_slist_node* node) {
-    return (void*)_align((size_t)(&node->next + 1), list->alignment);
+void* bdsm_slist_get(bdsm_slist_node* node) {
+    return node + 1;
 }
 void* bdsm_slist_insert(bdsm_slist* list, bdsm_slist_node* after,
                         size_t size) {
-    size_t allocationSize =
-        _align(sizeof(bdsm_slist_node), list->alignment) + size;
-    bdsm_slist_node* node = (bdsm_slist_node*)malloc(allocationSize);
+    bdsm_slist_node* node =
+        (bdsm_slist_node*)bdsm_alloc(sizeof(bdsm_slist_node) + size);
     node->next = NULL;
 
     list->size++;
@@ -37,7 +41,7 @@ void* bdsm_slist_insert(bdsm_slist* list, bdsm_slist_node* after,
 
     after->next = node;
 
-    return (void*)_align((size_t)(node + 1), list->alignment);
+    return node + 1;
 }
 
 void bdsm_slist_erase(bdsm_slist* list, bdsm_slist_node* after) {

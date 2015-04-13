@@ -8,15 +8,11 @@ namespace {
     public:
         bdsm_slist list;
 
-        void SetUp() { bdsm_slist_init(&list, 64); }
-        void TearDown() {
-            for(auto it = &list.root; it->next != nullptr;)
-                bdsm_slist_erase(&list, it);
-        }
+        void SetUp() { bdsm_slist_init(&list); }
+        void TearDown() { bdsm_slist_free(&list); }
     };
 
     TEST_F(slist_test, making_empty_list) {
-        EXPECT_EQ(list.alignment, 64);
         EXPECT_EQ(list.size, 0);
 
         auto begin = bdsm_slist_begin(&list);
@@ -29,25 +25,23 @@ namespace {
     TEST_F(slist_test, inserting_element_into_empty_begin) {
         auto node = &list.root;
 
-        auto data = bdsm_slist_insert(&list, node, 15);
-        EXPECT_EQ((size_t)data % 64, 0);
+        auto data = bdsm_slist_insert(&list, node, sizeof(int));
 
         EXPECT_EQ(list.size, 1);
-        EXPECT_EQ(bdsm_slist_get(&list, node->next), data);
+        EXPECT_EQ(bdsm_slist_get(node->next), data);
         EXPECT_EQ(bdsm_slist_begin(&list), node->next);
         EXPECT_EQ(bdsm_slist_end(&list), node->next);
         EXPECT_EQ(node->next->next, nullptr);
     }
-
+    
     TEST_F(slist_test, inserting_element_into_end) {
         *(int*)bdsm_slist_insert(&list, &list.root, 8) = 1;
         *(int*)bdsm_slist_insert(&list, bdsm_slist_begin(&list), 8) =
             2;
 
         EXPECT_EQ(list.size, 2);
-        EXPECT_EQ(*(int*)bdsm_slist_get(&list, list.root.next), 1);
-        EXPECT_EQ(*(int*)bdsm_slist_get(&list, list.root.next->next),
-                  2);
+        EXPECT_EQ(*(int*)bdsm_slist_get(list.root.next), 1);
+        EXPECT_EQ(*(int*)bdsm_slist_get(list.root.next->next), 2);
     }
 
     TEST_F(slist_test, multiple_inserts) {
@@ -59,17 +53,14 @@ namespace {
         }
 
         ASSERT_EQ(list.size, 100);
-        EXPECT_EQ(
-            *(int*)bdsm_slist_get(&list, bdsm_slist_begin(&list)),
-            98);
-        EXPECT_EQ(*(int*)bdsm_slist_get(&list, bdsm_slist_end(&list)),
-                  99);
+        EXPECT_EQ(*(int*)bdsm_slist_get(bdsm_slist_begin(&list)), 98);
+        EXPECT_EQ(*(int*)bdsm_slist_get(bdsm_slist_end(&list)), 99);
 
         auto it = bdsm_slist_begin(&list);
         for(int i = 0; i < 100; i++) {
             auto value = (i < 50) ? (98 - i * 2) : (i * 2 - 99);
 
-            EXPECT_EQ(*(int*)bdsm_slist_get(&list, it), value);
+            EXPECT_EQ(*(int*)bdsm_slist_get(it), value);
             it = it->next;
         }
     }
@@ -84,19 +75,19 @@ namespace {
                                  sizeof(int)) = 10;
 
         auto it = bdsm_slist_begin(&list);
-        EXPECT_EQ(*(int*)bdsm_slist_get(&list, it), 0);
+        EXPECT_EQ(*(int*)bdsm_slist_get(it), 0);
 
         it = it->next;
-        EXPECT_EQ(*(int*)bdsm_slist_get(&list, it), 1);
+        EXPECT_EQ(*(int*)bdsm_slist_get(it), 1);
 
         it = it->next;
-        EXPECT_EQ(*(int*)bdsm_slist_get(&list, it), 10);
+        EXPECT_EQ(*(int*)bdsm_slist_get(it), 10);
 
         it = it->next;
-        EXPECT_EQ(*(int*)bdsm_slist_get(&list, it), 2);
+        EXPECT_EQ(*(int*)bdsm_slist_get(it), 2);
 
         it = it->next;
-        EXPECT_EQ(*(int*)bdsm_slist_get(&list, it), 3);
+        EXPECT_EQ(*(int*)bdsm_slist_get(it), 3);
     }
 
     TEST_F(slist_test, erasing_element_from_begin) {
@@ -111,7 +102,7 @@ namespace {
 
         auto it = bdsm_slist_begin(&list);
         for(int i = 0; i < 5; i++, it = it->next)
-            EXPECT_EQ(*(int*)bdsm_slist_get(&list, it), 4 - i);
+            EXPECT_EQ(*(int*)bdsm_slist_get(it), 4 - i);
     }
 
     TEST_F(slist_test, erasing_at_end) {
