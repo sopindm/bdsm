@@ -8,7 +8,14 @@ void bdsm_dlist_init(bdsm_dlist* list) {
     list->root.prev = NULL;
 }
 
-void bdsm_dlist_free(bdsm_dlist* list) { (void)list; }
+void bdsm_dlist_free(bdsm_dlist* list) { 
+    bdsm_dlist_node* it = list->root.next;
+    while(it != &list->root) {
+        bdsm_dlist_node* next = it->next;
+        bdsm_free(it);
+        it = next;
+    }
+}
 
 bdsm_dlist_node* bdsm_dlist_begin(bdsm_dlist* list) {
     return list->root.next;
@@ -33,6 +40,21 @@ void* bdsm_dlist_insert(bdsm_dlist* list, bdsm_dlist_node* before,
         node->prev->next = node;
 
     return node + 1;
+}
+
+void bdsm_dlist_erase(bdsm_dlist* list, bdsm_dlist_node* before) {
+    list->size--;
+
+    bdsm_dlist_node* node = before->prev;
+
+    if(node->prev == NULL)
+        list->root.next = node->next;
+    else
+        node->prev->next = before;
+
+    before->prev = node->prev;
+
+    bdsm_free(node);
 }
 
 void* bdsm_dlist_get(bdsm_dlist_node* node) { return node + 1; }

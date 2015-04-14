@@ -38,7 +38,7 @@ namespace {
         EXPECT_EQ(end->prev, begin);
     }
 
-    TEST_F(dlist_test, inserting_several_elements_at_end) {
+    TEST_F(dlist_test, inserting_several_elements) {
         for(int i = 0; i < 10; i++)
             *(int*)bdsm_dlist_insert(&list, bdsm_dlist_end(&list),
                                      sizeof(int)) = i;
@@ -64,5 +64,27 @@ namespace {
         }
     }
 
-    // inserting element into empty list
+    TEST_F(dlist_test, erasing_elements) {
+        for(int i = 0; i < 10; i++)
+            *(int*)bdsm_dlist_insert(&list, bdsm_dlist_begin(&list),
+                                     sizeof(int)) = i;
+
+        auto it = bdsm_dlist_begin(&list)->next;
+        for(int i = 0; i < 5; i++) {
+            bdsm_dlist_erase(&list, it);
+            it = it->next->next;
+        }
+
+        it = bdsm_dlist_begin(&list);
+        EXPECT_EQ(it->prev, nullptr);
+
+        for(int i = 0; i < 5; i++) {
+            EXPECT_EQ(*(int*)bdsm_dlist_get(it), (4 - i) * 2);
+            it = it->next;
+        }
+        EXPECT_EQ(it, bdsm_dlist_end(&list));
+    }
+
+    // insert after
+    // erase after
 }

@@ -55,5 +55,5 @@ void bdsm_slist_erase(bdsm_slist* list, bdsm_slist_node* after) {
 
     after->next = next->next;
 
-    free(next);
+    bdsm_free(next);
 }
