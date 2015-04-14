@@ -85,6 +85,46 @@ namespace {
         EXPECT_EQ(it, bdsm_dlist_end(&list));
     }
 
-    // insert after
-    // erase after
+    TEST_F(dlist_test, inserting_elements_after) {
+        *(int*)bdsm_dlist_insert(&list, bdsm_dlist_begin(&list),
+                                 sizeof(int)) = 0;
+
+        auto it = bdsm_dlist_begin(&list);
+        for(int i = 1; i < 10; i++)
+            *(int*)bdsm_dlist_insert_after(&list, it, sizeof(int)) =
+                (10 - i);
+
+        EXPECT_EQ(list.size, 10);
+
+        for(int i = 0; i < 10; i++) {
+            ASSERT_NE(it, bdsm_dlist_end(&list));
+            EXPECT_EQ(*(int*)bdsm_dlist_get(it), i);
+            it = it->next;
+        }
+
+        EXPECT_EQ(it, bdsm_dlist_end(&list));
+    }
+
+    TEST_F(dlist_test, erasing_elements_after) {
+        for(int i = 0; i < 10; i++)
+            *(int*)bdsm_dlist_insert(&list, bdsm_dlist_begin(&list), sizeof(int)) =
+                i;
+
+        auto it = bdsm_dlist_begin(&list);
+        for(int i = 0; i < 5; i++) {
+            bdsm_dlist_erase_after(&list, it);
+            it = it->next;
+        }
+
+        EXPECT_EQ(list.size, 5);
+
+        it = bdsm_dlist_begin(&list);
+        for(int i = 0; i < 5; i++) {
+            ASSERT_NE(it, bdsm_dlist_end(&list));
+            EXPECT_EQ(*(int*)bdsm_dlist_get(it), (4 - i) * 2 + 1);
+            it = it->next;
+        }
+
+        EXPECT_EQ(it, bdsm_dlist_end(&list));
+    }
 }
