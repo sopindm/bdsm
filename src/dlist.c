@@ -12,7 +12,7 @@ void bdsm_dlist_free(bdsm_dlist* list) {
     bdsm_dlist_node* it = list->root.next;
     while(it != &list->root) {
         bdsm_dlist_node* next = it->next;
-        //bdsm_free(it);
+        bdsm_free(it);
         it = next;
     }
 }

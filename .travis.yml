@@ -1,6 +1,5 @@
 language: c
-install: apt-get install valgrind
-script: cmake . && make && make test && valgrind --error-exitcode=1 ./bdsm_test
+script: cmake . && make && make test
 compiler: 
   - gcc
   - clang
