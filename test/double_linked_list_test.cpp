@@ -107,8 +107,8 @@ namespace {
 
     TEST_F(dlist_test, erasing_elements_after) {
         for(int i = 0; i < 10; i++)
-            *(int*)bdsm_dlist_insert(&list, bdsm_dlist_begin(&list), sizeof(int)) =
-                i;
+            *(int*)bdsm_dlist_insert(&list, bdsm_dlist_begin(&list),
+                                     sizeof(int)) = i;
 
         auto it = bdsm_dlist_begin(&list);
         for(int i = 0; i < 5; i++) {
