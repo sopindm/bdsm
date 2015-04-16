@@ -49,9 +49,37 @@ namespace {
             EXPECT_EQ(*(int*)bdsm_vector_at(&vector, i), i);
     }
 
-    // resizing vector with move constructor
+    int count = 0;
+    void copier(bdsm_vector*, void* to, void* from) {
+        memcpy(to, from, sizeof(int));
+        count++;
+    }
 
-    // expanding vector
-    // pushing to vector
-    // popping from vector
+    TEST_F(vector_test, resizing_vector_with_mover) {
+        vector.mover = copier;
+
+        for(int i = 0; i < 10; i++)
+            *(int*)bdsm_vector_at(&vector, i) = i;
+        bdsm_vector_resize(&vector, 20);
+
+        EXPECT_EQ(count, 10);
+
+        bdsm_vector_resize(&vector, 5);
+        EXPECT_EQ(count, 10);
+    }
+
+    TEST_F(vector_test, pusing_to_vector) {
+        for(int i = 0; i < 20; i++)
+            *(int*)bdsm_vector_push(&vector) = i;
+
+        for(int i = 10; i < 30; i++)
+            EXPECT_EQ(*(int*)bdsm_vector_at(&vector, i), i - 10);
+    }
+
+    TEST_F(vector_test, popping_from_vector) {
+        for(int i = 0; i < 5; i++)
+            bdsm_vector_pop(&vector);
+
+        EXPECT_EQ(vector.size, 5);
+    }
 }
