@@ -3,6 +3,7 @@
 extern "C" {
 #include <array.h>
 }
+#include <vector>
 
 namespace {
     class array_test : public testing::Test {

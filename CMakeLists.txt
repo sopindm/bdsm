@@ -19,6 +19,7 @@ add_library(${CMAKE_PROJECT_NAME} STATIC src/alloc.c
   src/array.c
   src/slist.c
   src/dlist.c
+  src/vector.c
 )
 
 #
@@ -31,6 +32,7 @@ add_executable(${CMAKE_PROJECT_NAME}_test
   3rdparty/gtest/src/gtest_main.cc
   test/alloc_test.cpp
   test/array_test.cpp
+  test/vector_test.cpp
   test/single_linked_list_test.cpp
   test/double_linked_list_test.cpp
 )
