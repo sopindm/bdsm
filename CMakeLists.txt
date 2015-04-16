@@ -13,7 +13,7 @@ enable_testing()
 # Sources
 #
 
-set(CMAKE_C_FLAGS "-Werror -Wall -Wextra")
+set(CMAKE_C_FLAGS "-std=c99 -Werror -Wall -Wextra")
 
 add_library(${CMAKE_PROJECT_NAME} STATIC src/alloc.c
   src/array.c
