@@ -26,7 +26,8 @@ void bdsm_vector_resize(bdsm_vector* vector, size_t size) {
         return;
     }
 
-    size_t new_size = vector->allocated_size;
+    size_t new_size =
+        vector->allocated_size > 0 ? vector->allocated_size : 1;
     while(new_size < size)
         new_size *= 2;
 
